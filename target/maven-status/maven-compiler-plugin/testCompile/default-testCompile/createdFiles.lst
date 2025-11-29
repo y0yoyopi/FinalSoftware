@@ -1,0 +1,7 @@
+com/utec/gradecalculator/domain/StudentTest.class
+com/utec/gradecalculator/policy/AllYearsTeachersPolicyTest.class
+com/utec/gradecalculator/service/GradeCalculatorTest.class
+com/utec/gradecalculator/domain/EvaluationTest.class
+com/utec/gradecalculator/service/GradeCalculatorConcurrencyTest.class
+com/utec/gradecalculator/domain/GradeResultTest.class
+com/utec/gradecalculator/policy/DefaultAttendancePolicyTest.class

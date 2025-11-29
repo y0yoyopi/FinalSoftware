@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GradeCalculator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">grade-calculator</a> &gt; <a href="index.source.html" class="el_package">com.utec.gradecalculator.service</a> &gt; <span class="el_source">GradeCalculator.java</span></div><h1>GradeCalculator.java</h1><pre class="source lang-java linenums">package com.utec.gradecalculator.service;
+
+import com.utec.gradecalculator.domain.GradeResult;
+import com.utec.gradecalculator.domain.Evaluation;
+import com.utec.gradecalculator.domain.Student;
+import com.utec.gradecalculator.policy.AttendancePolicy;
+import com.utec.gradecalculator.policy.ExtraPointsPolicy;
+
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Servicio que orquesta el cálculo de la nota final.
+ * - No tiene estado mutable.
+ * - Es determinista.
+ */
+<span class="fc" id="L17">public final class GradeCalculator {</span>
+
+    /**
+     * Calcula la nota final del estudiante usando las políticas provistas.
+     *
+     * @param student            estudiante (no null)
+     * @param attendancePolicy   política de asistencia (no null)
+     * @param extraPointsPolicy  política de puntos extra (no null)
+     * @param allYearsTeachers   valor boolean que representa el consenso colectivo
+     * @return GradeResult con detalle del cálculo
+     */
+    public GradeResult calculateFinalGrade(
+            Student student,
+            AttendancePolicy attendancePolicy,
+            ExtraPointsPolicy extraPointsPolicy,
+            boolean allYearsTeachers) {
+
+<span class="fc" id="L34">        Objects.requireNonNull(student, &quot;student must not be null&quot;);</span>
+<span class="fc" id="L35">        Objects.requireNonNull(attendancePolicy, &quot;attendancePolicy must not be null&quot;);</span>
+<span class="fc" id="L36">        Objects.requireNonNull(extraPointsPolicy, &quot;extraPointsPolicy must not be null&quot;);</span>
+
+<span class="fc" id="L38">        List&lt;Evaluation&gt; evaluations = student.getEvaluations();</span>
+
+<span class="fc" id="L40">        double sumWeightedScores = 0.0;</span>
+<span class="fc" id="L41">        double sumWeights = 0.0;</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        for (Evaluation e : evaluations) {</span>
+            // Evaluations already validadas; asumimos score y weight válidos
+<span class="fc" id="L44">            sumWeightedScores += e.getScore() * e.getWeight();</span>
+<span class="fc" id="L45">            sumWeights += e.getWeight();</span>
+<span class="fc" id="L46">        }</span>
+
+        final double weightedAverage;
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (sumWeights &gt; 0.0) {</span>
+<span class="fc" id="L50">            weightedAverage = sumWeightedScores / sumWeights;</span>
+        } else {
+            // Definición: si no hay peso (o no hay evaluaciones) el promedio es 0.0
+            // Esto facilita manejo de caso borde en la rúbrica.
+            // También se incluye en el detalle.
+<span class="fc" id="L55">            weightedAverage = 0.0;</span>
+        }
+
+<span class="fc" id="L58">        double penalty = attendancePolicy.computePenalty(student.hasReachedMinClasses(), weightedAverage);</span>
+<span class="pc bpc" id="L59" title="3 of 6 branches missed.">        if (Double.isNaN(penalty) || Double.isInfinite(penalty) || penalty &lt; 0.0) {</span>
+<span class="nc" id="L60">            throw new IllegalStateException(&quot;AttendancePolicy returned invalid penalty: &quot; + penalty);</span>
+        }
+
+<span class="fc" id="L63">        double extra = extraPointsPolicy.computeExtraPoints(allYearsTeachers, student);</span>
+<span class="pc bpc" id="L64" title="3 of 6 branches missed.">        if (Double.isNaN(extra) || Double.isInfinite(extra) || extra &lt; 0.0) {</span>
+<span class="nc" id="L65">            throw new IllegalStateException(&quot;ExtraPointsPolicy returned invalid extra points: &quot; + extra);</span>
+        }
+
+<span class="fc" id="L68">        double rawFinal = weightedAverage - penalty + extra;</span>
+<span class="fc" id="L69">        double finalGrade = clamp(rawFinal, 0.0, 100.0);</span>
+
+<span class="fc" id="L71">        String detail = buildDetail(weightedAverage, sumWeights, penalty, extra, finalGrade);</span>
+
+<span class="fc" id="L73">        return new GradeResult(weightedAverage, penalty, extra, finalGrade, detail);</span>
+    }
+
+    private static double clamp(double v, double min, double max) {
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if (v &lt; min) return min;</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if (v &gt; max) return max;</span>
+<span class="fc" id="L79">        return v;</span>
+    }
+
+    private static String buildDetail(double weightedAverage, double sumWeights,
+                                      double penalty, double extraPoints, double finalGrade) {
+        // Formato compacto y claro, cumple RF05
+<span class="fc" id="L85">        return String.format(</span>
+                &quot;weightedAverage=%.4f, sumWeights=%.4f, penalty=%.4f, extraPoints=%.4f, finalGrade=%.4f&quot;,
+<span class="fc" id="L87">                weightedAverage, sumWeights, penalty, extraPoints, finalGrade</span>
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

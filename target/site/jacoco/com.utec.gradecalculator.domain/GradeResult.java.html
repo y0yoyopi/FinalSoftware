@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GradeResult.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">grade-calculator</a> &gt; <a href="index.source.html" class="el_package">com.utec.gradecalculator.domain</a> &gt; <span class="el_source">GradeResult.java</span></div><h1>GradeResult.java</h1><pre class="source lang-java linenums">package com.utec.gradecalculator.domain;
+
+
+import java.util.Objects;
+
+/**
+ * Resultado inmutable del cálculo de la nota final.
+ *
+ * Campos:
+ *  - weightedAverage: promedio ponderado calculado (0..100)
+ *  - penalty: puntos a restar por asistencia (&gt;= 0)
+ *  - extraPoints: puntos extra aplicados (&gt;= 0)
+ *  - finalGrade: nota final resultante (0..100)
+ *  - detail: texto explicativo (puede ser vacío)
+ *
+ * Validaciones:
+ *  - weightedAverage y finalGrade deben estar en [MIN_GRADE, MAX_GRADE]
+ *  - penalty y extraPoints deben ser &gt;= 0
+ *
+ * Nota: se decide validar rangos aquí para evitar resultados incoherentes al construir el objeto.
+ */
+public final class GradeResult {
+
+    public static final double MIN_GRADE = 0.0;
+    public static final double MAX_GRADE = 100.0;
+    public static final double MIN_NON_NEGATIVE = 0.0;
+
+    private final double weightedAverage;
+    private final double penalty;
+    private final double extraPoints;
+    private final double finalGrade;
+    private final String detail;
+
+    public GradeResult(double weightedAverage,
+                       double penalty,
+                       double extraPoints,
+                       double finalGrade,
+<span class="fc" id="L38">                       String detail) {</span>
+
+<span class="fc" id="L40">        validateFinite(weightedAverage, &quot;weightedAverage&quot;);</span>
+<span class="fc" id="L41">        validateFinite(penalty, &quot;penalty&quot;);</span>
+<span class="fc" id="L42">        validateFinite(extraPoints, &quot;extraPoints&quot;);</span>
+<span class="fc" id="L43">        validateFinite(finalGrade, &quot;finalGrade&quot;);</span>
+
+<span class="fc bfc" id="L45" title="All 4 branches covered.">        if (weightedAverage &lt; MIN_GRADE || weightedAverage &gt; MAX_GRADE) {</span>
+<span class="fc" id="L46">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L47">                    String.format(&quot;weightedAverage must be between %.1f and %.1f (was: %s)&quot;,</span>
+<span class="fc" id="L48">                            MIN_GRADE, MAX_GRADE, weightedAverage));</span>
+        }
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (penalty &lt; MIN_NON_NEGATIVE) {</span>
+<span class="fc" id="L51">            throw new IllegalArgumentException(&quot;penalty must be &gt;= 0&quot;);</span>
+        }
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        if (extraPoints &lt; MIN_NON_NEGATIVE) {</span>
+<span class="fc" id="L54">            throw new IllegalArgumentException(&quot;extraPoints must be &gt;= 0&quot;);</span>
+        }
+<span class="fc bfc" id="L56" title="All 4 branches covered.">        if (finalGrade &lt; MIN_GRADE || finalGrade &gt; MAX_GRADE) {</span>
+<span class="fc" id="L57">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L58">                    String.format(&quot;finalGrade must be between %.1f and %.1f (was: %s)&quot;,</span>
+<span class="fc" id="L59">                            MIN_GRADE, MAX_GRADE, finalGrade));</span>
+        }
+
+<span class="fc" id="L62">        this.weightedAverage = weightedAverage;</span>
+<span class="fc" id="L63">        this.penalty = penalty;</span>
+<span class="fc" id="L64">        this.extraPoints = extraPoints;</span>
+<span class="fc" id="L65">        this.finalGrade = finalGrade;</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        this.detail = (detail == null) ? &quot;&quot; : detail;</span>
+<span class="fc" id="L67">    }</span>
+
+    private static void validateFinite(double v, String name) {
+<span class="fc bfc" id="L70" title="All 4 branches covered.">        if (Double.isNaN(v) || Double.isInfinite(v)) {</span>
+<span class="fc" id="L71">            throw new IllegalArgumentException(name + &quot; must be a finite number&quot;);</span>
+        }
+<span class="fc" id="L73">    }</span>
+
+    public double getWeightedAverage() {
+<span class="fc" id="L76">        return weightedAverage;</span>
+    }
+
+    public double getPenalty() {
+<span class="fc" id="L80">        return penalty;</span>
+    }
+
+    public double getExtraPoints() {
+<span class="fc" id="L84">        return extraPoints;</span>
+    }
+
+    public double getFinalGrade() {
+<span class="fc" id="L88">        return finalGrade;</span>
+    }
+
+    public String getDetail() {
+<span class="fc" id="L92">        return detail;</span>
+    }
+
+    @Override
+    public boolean equals(Object o) {
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        if (this == o) return true;</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if (!(o instanceof GradeResult)) return false;</span>
+<span class="fc" id="L99">        GradeResult that = (GradeResult) o;</span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">        return Double.compare(that.weightedAverage, weightedAverage) == 0 &amp;&amp;</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">                Double.compare(that.penalty, penalty) == 0 &amp;&amp;</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">                Double.compare(that.extraPoints, extraPoints) == 0 &amp;&amp;</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">                Double.compare(that.finalGrade, finalGrade) == 0 &amp;&amp;</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">                Objects.equals(detail, that.detail);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L109">        return Objects.hash(weightedAverage, penalty, extraPoints, finalGrade, detail);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L114">        return &quot;GradeResult{&quot; +</span>
+                &quot;weightedAverage=&quot; + weightedAverage +
+                &quot;, penalty=&quot; + penalty +
+                &quot;, extraPoints=&quot; + extraPoints +
+                &quot;, finalGrade=&quot; + finalGrade +
+                &quot;, detail='&quot; + detail + '\'' +
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

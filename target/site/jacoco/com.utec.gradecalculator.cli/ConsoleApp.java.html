@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConsoleApp.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">grade-calculator</a> &gt; <a href="index.source.html" class="el_package">com.utec.gradecalculator.cli</a> &gt; <span class="el_source">ConsoleApp.java</span></div><h1>ConsoleApp.java</h1><pre class="source lang-java linenums">package com.utec.gradecalculator.cli;
+
+
+import com.utec.gradecalculator.domain.Evaluation;
+import com.utec.gradecalculator.domain.GradeResult;
+import com.utec.gradecalculator.domain.Student;
+import com.utec.gradecalculator.policy.AllYearsTeachersPolicy;
+import com.utec.gradecalculator.policy.DefaultAttendancePolicy;
+import com.utec.gradecalculator.policy.AttendancePolicy;
+import com.utec.gradecalculator.policy.ExtraPointsPolicy;
+import com.utec.gradecalculator.service.GradeCalculator;
+
+import java.util.Scanner;
+
+/**
+ * CLI mínimo: ejecución por terminal según el enunciado.
+ */
+<span class="nc" id="L18">public class ConsoleApp {</span>
+
+    public static void main(String[] args) {
+<span class="nc" id="L21">        Scanner sc = new Scanner(System.in);</span>
+        try {
+<span class="nc" id="L23">            System.out.print(&quot;Student id: &quot;);</span>
+<span class="nc" id="L24">            String id = sc.nextLine().trim();</span>
+
+<span class="nc" id="L26">            Student student = new Student(id);</span>
+
+<span class="nc" id="L28">            System.out.print(&quot;Number of evaluations (0-10): &quot;);</span>
+<span class="nc" id="L29">            int n = Integer.parseInt(sc.nextLine().trim());</span>
+
+<span class="nc bnc" id="L31" title="All 2 branches missed.">            for (int i = 0; i &lt; n; i++) {</span>
+<span class="nc" id="L32">                System.out.printf(&quot;Evaluation %d - score (0..100): &quot;, i+1);</span>
+<span class="nc" id="L33">                double score = Double.parseDouble(sc.nextLine().trim());</span>
+<span class="nc" id="L34">                System.out.printf(&quot;Evaluation %d - weight (0..100): &quot;, i+1);</span>
+<span class="nc" id="L35">                double weight = Double.parseDouble(sc.nextLine().trim());</span>
+<span class="nc" id="L36">                student.addEvaluation(new Evaluation(score, weight));</span>
+            }
+
+<span class="nc" id="L39">            System.out.print(&quot;Has reached minimum classes? (y/n): &quot;);</span>
+<span class="nc" id="L40">            String att = sc.nextLine().trim().toLowerCase();</span>
+<span class="nc bnc" id="L41" title="All 4 branches missed.">            student.setHasReachedMinClasses(att.equals(&quot;y&quot;) || att.equals(&quot;yes&quot;));</span>
+
+<span class="nc" id="L43">            System.out.print(&quot;All years teachers agree on extra points? (y/n): &quot;);</span>
+<span class="nc" id="L44">            String all = sc.nextLine().trim().toLowerCase();</span>
+<span class="nc bnc" id="L45" title="All 4 branches missed.">            boolean allYearsTeachers = all.equals(&quot;y&quot;) || all.equals(&quot;yes&quot;);</span>
+
+            // Políticas configurables: puedes exponer por args o config; aquí se usan valores razonables.
+<span class="nc" id="L48">            AttendancePolicy attendancePolicy = new DefaultAttendancePolicy(5.0); // ejemplo: 5 puntos si no cumple asistencia</span>
+<span class="nc" id="L49">            ExtraPointsPolicy extraPointsPolicy = new AllYearsTeachersPolicy(2.5); // ejemplo: +2.5 si consenso</span>
+
+<span class="nc" id="L51">            GradeCalculator calc = new GradeCalculator();</span>
+<span class="nc" id="L52">            GradeResult result = calc.calculateFinalGrade(student, attendancePolicy, extraPointsPolicy, allYearsTeachers);</span>
+
+<span class="nc" id="L54">            System.out.println();</span>
+<span class="nc" id="L55">            System.out.printf(&quot;Final grade: %.4f%n&quot;, result.getFinalGrade());</span>
+<span class="nc" id="L56">            System.out.println(&quot;Detail: &quot; + result.getDetail());</span>
+<span class="nc" id="L57">        } catch (Exception ex) {</span>
+<span class="nc" id="L58">            System.err.println(&quot;Error: &quot; + ex.getMessage());</span>
+            // para examen, mostrar stack puede ayudar a depurar; en producción lo evitarías
+<span class="nc" id="L60">            ex.printStackTrace(System.err);</span>
+        } finally {
+<span class="nc" id="L62">            sc.close();</span>
+        }
+<span class="nc" id="L64">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

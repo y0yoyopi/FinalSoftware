@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Student.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">grade-calculator</a> &gt; <a href="index.source.html" class="el_package">com.utec.gradecalculator.domain</a> &gt; <span class="el_source">Student.java</span></div><h1>Student.java</h1><pre class="source lang-java linenums">package com.utec.gradecalculator.domain;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Entidad Student minimalista para el examen.
+ * - Mantiene lista de evaluations (máx. MAX_EVALUATIONS)
+ * - Estado de asistencia: hasReachedMinClasses
+ */
+public class Student {
+    public static final int MAX_EVALUATIONS = 10;
+
+    private final String id;
+<span class="fc" id="L17">    private final List&lt;Evaluation&gt; evaluations = new ArrayList&lt;&gt;();</span>
+    private boolean hasReachedMinClasses;
+
+<span class="fc" id="L20">    public Student(String id) {</span>
+<span class="pc bpc" id="L21" title="1 of 4 branches missed.">        if (id == null || id.trim().isEmpty()) {</span>
+<span class="fc" id="L22">            throw new IllegalArgumentException(&quot;Student id must not be null or empty&quot;);</span>
+        }
+<span class="fc" id="L24">        this.id = id.trim();</span>
+<span class="fc" id="L25">    }</span>
+
+    public String getId() {
+<span class="fc" id="L28">        return id;</span>
+    }
+
+    public List&lt;Evaluation&gt; getEvaluations() {
+<span class="fc" id="L32">        return Collections.unmodifiableList(evaluations);</span>
+    }
+
+    public boolean hasReachedMinClasses() {
+<span class="fc" id="L36">        return hasReachedMinClasses;</span>
+    }
+
+    public void setHasReachedMinClasses(boolean hasReachedMinClasses) {
+<span class="fc" id="L40">        this.hasReachedMinClasses = hasReachedMinClasses;</span>
+<span class="fc" id="L41">    }</span>
+
+    /**
+     * Agrega una evaluación validando RNF01 (máx 10).
+     */
+    public void addEvaluation(Evaluation evaluation) {
+<span class="fc" id="L47">        Objects.requireNonNull(evaluation, &quot;evaluation must not be null&quot;);</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        if (evaluations.size() &gt;= MAX_EVALUATIONS) {</span>
+<span class="fc" id="L49">            throw new IllegalStateException(&quot;Maximum number of evaluations (&quot; + MAX_EVALUATIONS + &quot;) exceeded&quot;);</span>
+        }
+<span class="fc" id="L51">        evaluations.add(evaluation);</span>
+<span class="fc" id="L52">    }</span>
+
+    /**
+     * Remueve evaluación por índice.
+     */
+    public Evaluation removeEvaluation(int index) {
+<span class="nc" id="L58">        return evaluations.remove(index);</span>
+    }
+
+    public void clearEvaluations() {
+<span class="nc" id="L62">        evaluations.clear();</span>
+<span class="nc" id="L63">    }</span>
+
+    @Override
+    public boolean equals(Object o) {
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        if (this == o) return true;</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (!(o instanceof Student)) return false;</span>
+<span class="nc" id="L69">        Student student = (Student) o;</span>
+<span class="nc" id="L70">        return Objects.equals(id, student.id);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L75">        return Objects.hash(id);</span>
+    }
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

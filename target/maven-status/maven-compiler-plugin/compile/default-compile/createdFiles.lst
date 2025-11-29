@@ -1,0 +1,9 @@
+com/utec/gradecalculator/policy/AttendancePolicy.class
+com/utec/gradecalculator/policy/ExtraPointsPolicy.class
+com/utec/gradecalculator/domain/Student.class
+com/utec/gradecalculator/service/GradeCalculator.class
+com/utec/gradecalculator/cli/ConsoleApp.class
+com/utec/gradecalculator/policy/DefaultAttendancePolicy.class
+com/utec/gradecalculator/policy/AllYearsTeachersPolicy.class
+com/utec/gradecalculator/domain/GradeResult.class
+com/utec/gradecalculator/domain/Evaluation.class

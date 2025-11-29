@@ -1,0 +1,8 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+grade-calculator,com.utec.gradecalculator.policy,AllYearsTeachersPolicy,3,33,0,8,1,8,1,6,1,2
+grade-calculator,com.utec.gradecalculator.policy,DefaultAttendancePolicy,3,33,0,8,1,8,1,6,1,2
+grade-calculator,com.utec.gradecalculator.service,GradeCalculator,12,159,6,14,2,27,6,8,0,4
+grade-calculator,com.utec.gradecalculator.domain,Student,38,57,5,5,8,16,7,8,4,6
+grade-calculator,com.utec.gradecalculator.domain,GradeResult,3,231,6,26,0,41,6,20,0,10
+grade-calculator,com.utec.gradecalculator.domain,Evaluation,5,151,6,18,0,27,6,14,0,8
+grade-calculator,com.utec.gradecalculator.cli,ConsoleApp,171,0,10,0,31,0,7,0,2,0

@@ -97,6 +97,7 @@ class GradeCalculatorTest {
         // Now big penalty
         AttendancePolicy ap2 = new DefaultAttendancePolicy(200.0);
         ExtraPointsPolicy ep2 = new AllYearsTeachersPolicy(0.0);
+        s.setHasReachedMinClasses(false);
         GradeResult r2 = calc.calculateFinalGrade(s, ap2, ep2, false);
         assertEquals(0.0, r2.getFinalGrade(), 1e-6);
     }
